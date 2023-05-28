@@ -7,6 +7,8 @@ from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 import os
 from langchain.agents import initialize_agent
 from HandDetectorTool import HandDetectorTool
+import pyttsx3
+import speech_recognition as sr
 
 # initialize LLM (we use ChatOpenAI because we'll later define a `chat` agent)
 llm = ChatOpenAI(
@@ -14,6 +16,15 @@ llm = ChatOpenAI(
         temperature=0,
         model_name='gpt-3.5-turbo'
 )
+
+# initializing text to speech 
+engine = pyttsx3.init()
+voices = engine.getProperty('voices')       #getting details of current voice
+engine.setProperty('voice', voices[1].id)   #changing index, changes voices. 1 for female
+
+# speech recognition
+r = sr.Recognizer()
+mic = sr.Microphone()
 
 # initialize conversational memory
 conversational_memory = ConversationBufferWindowMemory(
@@ -36,7 +47,20 @@ agent = initialize_agent(
     memory=conversational_memory
 )
 
+reponse = agent("Hi")['output']
+engine.say(reponse)
+engine.runAndWait()
 
 while True:
+    with mic as source:
+        r.adjust_for_ambient_noise(source)
+        audio = r.listen(source)
+
     # get input from user and pass it into the agent to determine which tools to uses
-    agent(input("How may I assist you: "))
+    reponse = agent(r.recognize_google(audio))['output']
+
+    # To type the question rather than speak it
+    # reponse = agent(input("Question: "))['output']
+
+    engine.say(reponse)
+    engine.runAndWait()

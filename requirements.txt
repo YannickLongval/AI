@@ -3,3 +3,6 @@ openai
 opencv-python
 cvzone
 mediapipe
+pyttsx3
+SpeechRecognition
+pyaudio
