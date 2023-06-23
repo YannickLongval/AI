@@ -7,6 +7,7 @@ from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 import os
 from langchain.agents import initialize_agent
 from HandDetectorTool import HandDetectorTool
+from ImageTool import ImageTool
 import pyttsx3
 import speech_recognition as sr
 
@@ -34,7 +35,7 @@ conversational_memory = ConversationBufferWindowMemory(
 )
 
 # creating list of tools
-tools = [HandDetectorTool()]
+tools = [HandDetectorTool(), ImageTool()]
 
 # initialize agent with tools
 agent = initialize_agent(
@@ -52,15 +53,15 @@ engine.say(reponse)
 engine.runAndWait()
 
 while True:
-    with mic as source:
-        r.adjust_for_ambient_noise(source)
-        audio = r.listen(source)
+    # with mic as source:
+    #     r.adjust_for_ambient_noise(source)
+    #     audio = r.listen(source)
 
     # get input from user and pass it into the agent to determine which tools to uses
-    reponse = agent(r.recognize_google(audio))['output']
+    # reponse = agent(r.recognize_google(audio))['output']
 
     # To type the question rather than speak it
-    # reponse = agent(input("Question: "))['output']
+    reponse = agent(input("Question: "))['output']
 
     engine.say(reponse)
     engine.runAndWait()

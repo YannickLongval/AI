@@ -6,3 +6,4 @@ mediapipe
 pyttsx3
 SpeechRecognition
 pyaudio
+wolframclient
